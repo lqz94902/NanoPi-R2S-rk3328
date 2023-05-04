@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm /mnt/sda1/R2S/.Syslog/fan.txt        #����ɾ��fan.log
+rm /mnt/sda1/R2S/.Syslog/fan.txt        #启动删除fan.log
 
 if [ ! -d /sys/class/pwm/pwmchip0 ]; then
     echo "this model does not support pwm."
@@ -27,15 +27,15 @@ echo -n 25000 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
 sleep 5
 echo -n 49990 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle
 
-## ����������ͣ�¶�
+## 这里设置启停温度
 temphigh=55000
 templow=45000
 # declare -a CpuTemps=(55000 43000 38000 32000)
 # declare -a PwmDutyCycles=(1000 20000 30000 45000)
 
-declare -a CpuTemps=(65000 60000 55000 $temphigh)     #�����Զ����ٽ��¶����飨65��,60��,55��,{$temphigh}�棩
-declare -a PwmDutyCycles=(25000 30000 35000 45000)    #pwm�͵�ƽʱ�䣬���ڵ���ռ�ձȣ�ռ�ձ�=[period-PwmDutyCycles]/period��
-#��Ӧ�ٽ��¶�ռ�ձȣ�50%,40%,30%,10%��
+declare -a CpuTemps=(65000 60000 55000 $temphigh)     #启用自定义临界温度数组（65℃,60℃,55℃,{$temphigh}℃）
+declare -a PwmDutyCycles=(25000 30000 35000 45000)    #pwm低电平时间，用于调节占空比（占空比=[period-PwmDutyCycles]/period）
+#对应临界温度占空比（50%,40%,30%,10%）
 declare -a Percents=(50 40 30 10)
 
 lognum=0
@@ -56,7 +56,7 @@ do
 			DUTY=${PwmDutyCycles[$i]}
 			PERCENT=${Percents[$i]}
       
-      #������תд����־
+      #风扇启转写入日志
       #echo "==============================" >> /mnt/sda1/R2S/.Syslog/fan.txt
       echo "No.$lognum" >> /mnt/sda1/R2S/.Syslog/fan.txt
       date >> /mnt/sda1/R2S/.Syslog/fan.txt
@@ -64,7 +64,7 @@ do
       ((lognum++));
       
 			break
-    elif [ $temp -le $templow ]; then          #�¶ȵ���templowͣת
+    elif [ $temp -le $templow ]; then          #温度低于templow停转
 			DUTY=49990
 			break
 		fi	
@@ -72,5 +72,5 @@ do
   
 	echo -n $DUTY > /sys/class/pwm/pwmchip0/pwm0/duty_cycle;
 
-	sleep 5;      #���ʱ��������λ���룩
+	sleep 5;      #监控时间间隔（单位：秒）
 done
