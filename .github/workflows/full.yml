@@ -17,7 +17,7 @@ on:
   #   types: started
 
 env:
-  REPO_URL: https://github.com/lqz94902/lede
+  REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: stable
   CONFIG_FILE: configs/lean/lean.config
   DIY_SH: scripts/lean.sh
@@ -28,7 +28,6 @@ env:
 jobs:
   Build:
     runs-on: self-hosted
-    if: github.repository == 'lqz94902/NanoPi-R2S-rk3328'
     outputs:
       OPENWRTROOT: ${{ steps.update.outputs.OPENWRTROOT }}
       PLATFORM: ${{ steps.compile.outputs.PLATFORM }}
