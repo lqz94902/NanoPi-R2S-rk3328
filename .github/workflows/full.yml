@@ -74,6 +74,7 @@ jobs:
     - name: Install Feeds
       run: |
         cd $OPENWRTROOT
+        sudo apt install libfuse-dev
         ./scripts/feeds install -a
         
     - name: Load Custom Configuration
