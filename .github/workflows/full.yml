@@ -55,6 +55,9 @@ jobs:
         
     - name: Clone Source Code
       run: |
+        sudo apt update -y
+        sudo apt full-upgrade -y
+        sudo apt install -y ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pyelftools libpython3-dev qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
         cd openwrt
@@ -101,11 +104,11 @@ jobs:
       id: compile
       run: |
         cd $OPENWRTROOT
-        make tools/compile -j1 || make tools/compile -j1 V=s
-        make toolchain/compile -j1 || make toolchain/compile -j1 V=s
-        make target/compile -j1 || make target/compile -j1 V=s IGNORE_ERRORS=1
+        make tools/compile -j$(nproc) || make tools/compile -j$(nproc) V=s
+        make toolchain/compile -j$(nproc) || make toolchain/compile -j$(nproc) V=s
+        make target/compile -j$(nproc) || make target/compile -j$(nproc) V=s IGNORE_ERRORS=1
         make diffconfig
-        make package/compile -j1 IGNORE_ERRORS=1 || make package/compile -j1 V=s IGNORE_ERRORS=1
+        make package/compile -j$(nproc) IGNORE_ERRORS=1 || make package/compile -j$(nproc) V=s IGNORE_ERRORS=1
         make package/index
         cd $OPENWRTROOT/bin/packages/*
         PLATFORM=$(basename `pwd`)
@@ -148,8 +151,8 @@ jobs:
         fi
         cp files/etc/opkg/distfeeds.conf.server files/etc/opkg/distfeeds.conf.mirror
         sed -i "s/http:\/\/192.168.123.100:2345\/snapshots/https:\/\/openwrt.cc\/snapshots\/$(date +"%Y-%m-%d")\/lean/g" files/etc/opkg/distfeeds.conf.mirror
-        make package/install -j1 || make package/install -j1 V=s
-        make target/install -j1 || make target/install -j1 V=s
+        make package/install -j$(nproc) || make package/install -j$(nproc) V=s
+        make target/install -j$(nproc) || make target/install -j$(nproc) V=s
         pushd bin/targets/rockchip/armv8
         #rm -rf **ext4**
         rm -rf openwrt-rockchip-armv8-friendlyarm_nanopi-r2s.manifest
