@@ -28,7 +28,7 @@ env:
 jobs:
   Build:
     runs-on: self-hosted
-    if: github.repository == 'DHDAXCW/NanoPi-R2S-rk3328'
+    if: github.repository == 'lqz94902/NanoPi-R2S-rk3328'
     outputs:
       OPENWRTROOT: ${{ steps.update.outputs.OPENWRTROOT }}
       PLATFORM: ${{ steps.compile.outputs.PLATFORM }}
