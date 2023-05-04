@@ -27,7 +27,7 @@ env:
 
 jobs:
   Build:
-    runs-on: ubuntu 20.04
+    runs-on: ubuntu-20.04
     outputs:
       OPENWRTROOT: ${{ steps.update.outputs.OPENWRTROOT }}
       PLATFORM: ${{ steps.compile.outputs.PLATFORM }}
